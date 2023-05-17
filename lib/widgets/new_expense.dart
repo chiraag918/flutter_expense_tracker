@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expense_tracker/models/expense.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense(this.addExpenses, {super.key});
+
+  final void Function(Expense) addExpenses;
 
   @override
   State<NewExpense> createState() {
@@ -21,6 +23,45 @@ class _NewExpenseState extends State<NewExpense> {
     _titleController.dispose();
     _amountController.dispose();
     super.dispose();
+  }
+
+  void _submitExpense() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final invalidExpenseAmount = enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        invalidExpenseAmount ||
+        _selectedDate == null) {
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Invalid input'),
+              content: const Text(
+                  'Please make sure a valid title, amount and date have been entered'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Okay'),
+                ),
+              ],
+            );
+          });
+      // Returning as we don't want to execute, saving the expense
+      return;
+    }
+
+    widget.addExpenses(
+      Expense(
+          title: _titleController.text,
+          amount: enteredAmount,
+          date: _selectedDate!,
+          category: _selectedCategory),
+    );
+
+    Navigator.pop(context);
   }
 
   void _presentDatePicker() async {
@@ -118,10 +159,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(_titleController.text);
-                  print(_amountController.text);
-                },
+                onPressed: _submitExpense,
                 child: const Text('Save Expense'),
               ),
             ],
