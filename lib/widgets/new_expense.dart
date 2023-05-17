@@ -13,6 +13,7 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  DateTime? _selectedDate;
 
   @override
   void dispose() {
@@ -21,16 +22,21 @@ class _NewExpenseState extends State<NewExpense> {
     super.dispose();
   }
 
-  void _presentDatePicker() {
+  void _presentDatePicker() async {
     final currentDate = DateTime.now();
     final startDate =
         DateTime(currentDate.year - 1, currentDate.month, currentDate.day);
 
-    showDatePicker(
+    final pickedDate = await showDatePicker(
         context: context,
         initialDate: currentDate,
         firstDate: startDate,
         lastDate: currentDate);
+
+    // Will only execute after the await block is executed
+    setState(() {
+      _selectedDate = pickedDate;
+    });
   }
 
   @override
@@ -65,7 +71,9 @@ class _NewExpenseState extends State<NewExpense> {
               ),
               Row(
                 children: [
-                  const Text('Select Date'),
+                  Text(_selectedDate == null
+                      ? 'Select Date'
+                      : dateFormatter.format(_selectedDate!)),
                   const SizedBox(
                     width: 5,
                   ),
