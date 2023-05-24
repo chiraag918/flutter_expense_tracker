@@ -21,6 +21,12 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void removeExpenses(expense) {
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+  }
+
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       isDismissible: true,
@@ -47,7 +53,10 @@ class _ExpensesState extends State<Expenses> {
         children: [
           const Text("Expenses"),
           Expanded(
-            child: ExpensesList(expensesList: _registeredExpenses),
+            child: ExpensesList(
+              expensesList: _registeredExpenses,
+              removeExpense: removeExpenses,
+            ),
           ),
         ],
       ),
