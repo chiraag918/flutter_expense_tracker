@@ -13,17 +13,25 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  List<Expense> _registeredExpenses = [];
+  final List<Expense> _registeredExpenses = [];
 
   void addExpenses(expense) {
     setState(() {
       _registeredExpenses.add(expense);
-      _registeredExpenses = [..._registeredExpenses];
+    });
+  }
+
+  void removeExpenses(expense) {
+    setState(() {
+      _registeredExpenses.remove(expense);
     });
   }
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      isDismissible: true,
+      // To make the bottom sheet, take up the full screen
+      isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(addExpenses),
     );
@@ -45,7 +53,10 @@ class _ExpensesState extends State<Expenses> {
         children: [
           const Text("Expenses"),
           Expanded(
-            child: ExpensesList(expensesList: _registeredExpenses),
+            child: ExpensesList(
+              expensesList: _registeredExpenses,
+              removeExpense: removeExpenses,
+            ),
           ),
         ],
       ),
