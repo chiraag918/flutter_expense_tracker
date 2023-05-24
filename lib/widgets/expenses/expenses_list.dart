@@ -18,6 +18,13 @@ class ExpensesList extends StatelessWidget {
           onDismissed: (direction) {
             removeExpense(expensesList[index]);
           },
+          background: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Theme.of(context).colorScheme.error.withOpacity(0.8),
+              Colors.white
+            ])),
+          ),
           child: ExpensesItem(expensesList[index])),
     );
   }
