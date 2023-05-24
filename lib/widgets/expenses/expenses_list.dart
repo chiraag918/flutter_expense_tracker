@@ -20,10 +20,13 @@ class ExpensesList extends StatelessWidget {
           },
           background: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Theme.of(context).colorScheme.error.withOpacity(0.8),
-              Colors.white
-            ])),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.errorContainer.withOpacity(0.5),
+                  Theme.of(context).colorScheme.errorContainer.withOpacity(0.2)
+                ],
+              ),
+            ),
           ),
           child: ExpensesItem(expensesList[index])),
     );
