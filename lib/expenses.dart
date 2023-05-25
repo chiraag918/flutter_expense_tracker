@@ -48,6 +48,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea: true,
       isDismissible: true,
       // To make the bottom sheet, take up the full screen
       isScrollControlled: true,
@@ -70,43 +71,48 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: width < 600
-          ? Column(
-              children: [
-                Expanded(
-                  child: Chart(expenses: _registeredExpenses),
+      body: SafeArea(
+        child: width < 600
+            ? Column(
+                children: [
+                  Expanded(
+                    child: Chart(expenses: _registeredExpenses),
+                  ),
+                  Expanded(
+                    child: (_registeredExpenses.isNotEmpty)
+                        ? ExpensesList(
+                            expensesList: _registeredExpenses,
+                            removeExpense: removeExpenses,
+                          )
+                        : const Center(
+                            child: Text(
+                                "No expenses found. Click on + to add some."),
+                          ),
+                  ),
+                ],
+              )
+            : Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Chart(expenses: _registeredExpenses),
+                    ),
+                    Expanded(
+                      child: (_registeredExpenses.isNotEmpty)
+                          ? ExpensesList(
+                              expensesList: _registeredExpenses,
+                              removeExpense: removeExpenses,
+                            )
+                          : const Center(
+                              child: Text(
+                                  "No expenses found. Click on + to add some."),
+                            ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: (_registeredExpenses.isNotEmpty)
-                      ? ExpensesList(
-                          expensesList: _registeredExpenses,
-                          removeExpense: removeExpenses,
-                        )
-                      : const Center(
-                          child: Text(
-                              "No expenses found. Click on + to add some."),
-                        ),
-                ),
-              ],
-            )
-          : Row(
-              children: [
-                Expanded(
-                  child: Chart(expenses: _registeredExpenses),
-                ),
-                Expanded(
-                  child: (_registeredExpenses.isNotEmpty)
-                      ? ExpensesList(
-                          expensesList: _registeredExpenses,
-                          removeExpense: removeExpenses,
-                        )
-                      : const Center(
-                          child: Text(
-                              "No expenses found. Click on + to add some."),
-                        ),
-                ),
-              ],
-            ),
+              ),
+      ),
     );
   }
 }
