@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expense_tracker/models/expense.dart';
 
@@ -25,13 +27,26 @@ class _NewExpenseState extends State<NewExpense> {
     super.dispose();
   }
 
-  void _submitExpense() {
-    final enteredAmount = double.tryParse(_amountController.text);
-    final invalidExpenseAmount = enteredAmount == null || enteredAmount <= 0;
-
-    if (_titleController.text.trim().isEmpty ||
-        invalidExpenseAmount ||
-        _selectedDate == null) {
+  void _showDialog() {
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+          context: context,
+          builder: (ctx) {
+            return CupertinoAlertDialog(
+              title: const Text('Invalid input'),
+              content: const Text(
+                  'Please make sure a valid title, amount and date have been entered'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Okay'),
+                ),
+              ],
+            );
+          });
+    } else {
       showDialog(
           context: context,
           builder: (ctx) {
@@ -49,6 +64,17 @@ class _NewExpenseState extends State<NewExpense> {
               ],
             );
           });
+    }
+  }
+
+  void _submitExpense() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final invalidExpenseAmount = enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        invalidExpenseAmount ||
+        _selectedDate == null) {
+      _showDialog();
       // Returning as we don't want to execute, saving the expense
       return;
     }
@@ -70,10 +96,11 @@ class _NewExpenseState extends State<NewExpense> {
         DateTime(currentDate.year - 1, currentDate.month, currentDate.day);
 
     final pickedDate = await showDatePicker(
-        context: context,
-        initialDate: currentDate,
-        firstDate: startDate,
-        lastDate: currentDate);
+      context: context,
+      initialDate: currentDate,
+      firstDate: startDate,
+      lastDate: currentDate,
+    );
 
     // Will only execute after the await block is executed
     setState(() {
